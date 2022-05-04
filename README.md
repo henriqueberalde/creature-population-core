@@ -4,7 +4,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 **TODO**
 ---
 
-*****Core POC*****
+**Core POC**
 * [x] Decide program lang
 * [x] Create project
 * [x] Create repo on github
@@ -15,6 +15,8 @@ A generic environment built with genetic algorithm for experiments on colony (po
 * [ ] Setup automated tests
 * [ ] Setup DB
 * [ ] Setup Genetic Algorithm
+* [ ] Deny commits directly to main branch
+* [ ] Deny not signed commits
 
 **Bomberman POC**
 * [ ] `Every turn` all creatures get old

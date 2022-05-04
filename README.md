@@ -15,7 +15,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 * [ ] Setup automated tests
 * [ ] Setup DB
 * [ ] Setup Genetic Algorithm
-* [ ] Deny commits directly to main branch
+* [x] Deny commits directly to main branch
 * [ ] Deny not signed commits
 
 **Bomberman POC**

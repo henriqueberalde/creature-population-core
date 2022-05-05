@@ -10,7 +10,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Create project
 - [x] Create repo on github
 - [x] Add readme
-- [ ] Setup Unit Tests
+- [x] Setup Unit Tests
 - [ ] Field class
 - [ ] Event class
 - [ ] World class

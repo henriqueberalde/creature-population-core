@@ -12,7 +12,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 
 # **TODO**
 
-- [ ] Create an event on queue
+- [x] Create an event on queue
 - [ ] Execute an event from queue
 - [ ] Create World class
 - [ ] Create Element class

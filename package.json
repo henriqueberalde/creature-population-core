@@ -40,6 +40,7 @@
     "verbose": true
   },
   "dependencies": {
+    "dotenv": "^16.0.1",
     "ioredis": "^5.1.0",
     "node-redis-streams": "^1.1.4",
     "yargs": "^17.5.1"

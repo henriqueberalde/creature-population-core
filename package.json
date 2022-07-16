@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@types/ioredis": "^4.28.10",
     "@types/jest": "^27.5.0",
     "@types/node": "^18.0.1",
     "@types/yargs": "^17.0.10",
@@ -18,8 +19,8 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "test": "jest --forceExit",
-    "test-detect-open-handles": "jest --detectOpenHandles"
+    "test": "NODE_ENV=test jest --forceExit --setupFiles \"./config.ts\"",
+    "test-detect-open-handles": "jest --detectOpenHandles --setupFiles \"./config.ts\""
   },
   "jest": {
     "moduleFileExtensions": [
@@ -40,6 +41,7 @@
     "verbose": true
   },
   "dependencies": {
+    "dotenv": "^16.0.1",
     "ioredis": "^5.1.0",
     "node-redis-streams": "^1.1.4",
     "yargs": "^17.5.1"

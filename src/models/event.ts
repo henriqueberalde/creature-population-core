@@ -1,36 +1,16 @@
-import Redis from 'ioredis';
-
 export default class Event {
+  public id?: string;
+
   public name: string;
 
   public class: string;
 
   public method: string;
 
-  constructor(name: string, argClass: string, method: string) {
-    this.name = name;
-    this.class = argClass;
-    this.method = method;
-  }
-
-  public create() {
-    const redisClient = Redis.createClient();
-
-    return redisClient.xadd(
-      'event-stream',
-      '*',
-      'name',
-      this.name,
-      'class',
-      this.class,
-      'method',
-      this.method,
-    );
-  }
-
-  public static get(id: string) {
-    const redis = new Redis();
-
-    return redis.xrange('event-stream', id, id);
+  constructor(event?: any) {
+    this.id = event.id;
+    this.name = event.name;
+    this.class = event.class;
+    this.method = event.method;
   }
 }

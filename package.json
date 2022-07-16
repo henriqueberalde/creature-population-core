@@ -19,8 +19,8 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "test": "jest --forceExit",
-    "test-detect-open-handles": "jest --detectOpenHandles"
+    "test": "NODE_ENV=test jest --forceExit --setupFiles \"./config.ts\"",
+    "test-detect-open-handles": "jest --detectOpenHandles --setupFiles \"./config.ts\""
   },
   "jest": {
     "moduleFileExtensions": [

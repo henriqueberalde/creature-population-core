@@ -1,11 +1,5 @@
-import Redis from 'ioredis';
-
 export default class Event {
-  private streamName: string;
-
-  private groupName: string;
-
-  private consumerName: string;
+  public id?: string;
 
   public name: string;
 
@@ -13,34 +7,10 @@ export default class Event {
 
   public method: string;
 
-  constructor(name: string, argClass: string, method: string) {
-    this.streamName = process.env.REDIS_EVENT_STREAM_NAME;
-    this.groupName = process.env.REDIS_EVENT_CONSUMER_GROUP_NAME;
-    this.consumerName = process.env.REDIS_EVENT_CONSUMER_NAME;
-
-    this.name = name;
-    this.class = argClass;
-    this.method = method;
-  }
-
-  public create() {
-    const redisClient = Redis.createClient();
-
-    return redisClient.xadd(
-      'event-stream',
-      '*',
-      'name',
-      this.name,
-      'class',
-      this.class,
-      'method',
-      this.method,
-    );
-  }
-
-  public static get(id: string) {
-    const redis = new Redis();
-
-    return redis.xrange('event-stream', id, id);
+  constructor(event?: any) {
+    this.id = event.id;
+    this.name = event.name;
+    this.class = event.class;
+    this.method = event.method;
   }
 }

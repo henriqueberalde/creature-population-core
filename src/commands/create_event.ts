@@ -1,4 +1,5 @@
 import { Arguments, Argv } from 'yargs';
+import Factory from '../factory/factory';
 import Event from '../models/event';
 
 export const command = 'create-event';
@@ -12,6 +13,7 @@ export function builder(yargs: Arguments<Argv>) {
         alias: 'n',
         default: 'Generic Event',
         describe: 'The name of the event',
+        demandOption: 'The name must be specified',
         type: 'string',
       },
       class: {
@@ -35,6 +37,18 @@ export function handler(argv: Arguments<Argv>) {
   const method = <string>argv.method;
   const argClass = <string>argv.class;
 
-  const event = new Event(name, method, argClass);
-  event.create();
+  const eventQueue = Factory.getInstanceOfEventQueueInstance();
+
+  eventQueue
+    .create(
+      new Event({
+        id: '',
+        name,
+        class: argClass,
+        method,
+      }),
+    )
+    .then(() => process.exit())
+    .catch((error) => console.error(error))
+    .finally(() => process.exit());
 }

@@ -27,6 +27,7 @@ export default class Orchestrator {
     setTimeout(() => {
       this.executeTurn();
       this.executeEventsRecursivly(delayInMiliseconds);
+      this.info();
     }, delayInMiliseconds);
   }
 
@@ -64,24 +65,54 @@ export default class Orchestrator {
     return this.getUniqueEvents().filter((event) => event.isEveryTurnEvent);
   }
 
-  private showEntities() {
-    this.entities.forEach((entity) => {
-      console.log(`${entity.id} ${entity.type}`);
-      console.table(entity.events);
-      console.table(entity.fields);
-    });
+  public showEvents() {
+    console.table('EVENTS');
+    const table = this.getUniqueEvents().map(
+      (event) => `${event.name} (${event.type} ${event.type.toString()})`,
+    );
+
+    console.table(table);
   }
 
-  private info() {
-    console.log('EVENTS');
-    console.log(this.getUniqueEvents());
-    console.log('\n');
+  public showEntities() {
+    console.table('ENTITIES');
 
-    console.log('ENTITIES');
+    const table = this.entities.map((entity) => ({
+      id: entity.id,
+      type: entity.type,
+      events: entity.events.map(
+        (event) =>
+          // eslint-disable-next-line implicit-arrow-linebreak
+          `[${event.type === EventType.Entity ? 'Entity' : 'Orchestrator'}] ${
+            event.name
+          }`,
+      ),
+    }));
+
+    console.table(table);
+  }
+
+  public showEntitiesFields() {
+    const table: any = {};
+
+    console.log('FIELDS');
 
     this.entities.forEach((entity) => {
-      console.log(entity);
+      const entries = entity.fields.map((field) => [field.key, field.value]);
+
+      table[entity.id] = Object.fromEntries(entries);
     });
+
+    console.table(table);
+  }
+
+  public info() {
+    console.log('\n');
+    this.showEvents();
+    console.log('\n');
+    this.showEntities();
+    console.log('\n');
+    this.showEntitiesFields();
   }
 
   private executeTurn() {

@@ -1,16 +1,22 @@
+export enum EventType {
+  Entity,
+  Orchestrator,
+}
+
 export default class Event {
-  public id?: string;
+  public type: EventType;
 
   public name: string;
 
-  public class: string;
+  public isEveryTurnEvent: boolean;
 
-  public method: string;
-
-  constructor(event?: any) {
-    this.id = event.id;
-    this.name = event.name;
-    this.class = event.class;
-    this.method = event.method;
+  constructor(
+    eventType: EventType,
+    name: string,
+    isEveryTurnEvent: boolean = true,
+  ) {
+    this.type = eventType;
+    this.name = name;
+    this.isEveryTurnEvent = isEveryTurnEvent;
   }
 }

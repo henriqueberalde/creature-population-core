@@ -6,17 +6,22 @@ A generic environment built with genetic algorithm for experiments on colony (po
 
 - `language` Typescript
 - `persistence` No persistence for while
-- `engine` Redis Stream
+- `engine` Node in memory for while
 - `infra` Local
 - `interface` CLI
 
 # **TODO**
 
-- [x] Create an event on queue
-- [x] Read events from queue
-- [ ] Execute an event from queue
-- [ ] Create World class
-- [ ] Create Element class
+- [x] Create class Entity
+- [x] Create class Event
+- [x] Create class Orchestrator
+- [ ] Error treatment
+- [ ] Refactor log messages
+- [ ] Show all entity`s information somehow
+- [ ] Run one turn at time
+- [ ] Terminal interface to interact (yargs)
+- [ ] Some kind of persistence
+- [ ] Implement the first application of the concept with a simple creature population
 
 # **Backlog**
 

@@ -81,11 +81,7 @@ export default class Orchestrator {
       id: entity.id,
       type: entity.type,
       events: entity.events.map(
-        (event) =>
-          // eslint-disable-next-line implicit-arrow-linebreak
-          `[${event.type === EventType.Entity ? 'Entity' : 'Orchestrator'}] ${
-            event.name
-          }`,
+        (event) => `[${event.showType()}] ${event.name}`,
       ),
     }));
 

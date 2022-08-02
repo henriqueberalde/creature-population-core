@@ -10,6 +10,17 @@ export default class Event {
 
   public isEveryTurnEvent: boolean;
 
+  public showType(): string {
+    switch (this.type) {
+      case EventType.Entity:
+        return 'Entity';
+      case EventType.Orchestrator:
+        return 'Orchestrator';
+      default:
+        return '';
+    }
+  }
+
   constructor(
     eventType: EventType,
     name: string,

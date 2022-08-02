@@ -44,16 +44,12 @@ export default class Orchestrator {
 
   // eslint-disable-next-line class-methods-use-this
   public executeEvent(event: Event, entity: Entity): void {
-    console.log(entity.events);
     if (entity.events.filter((e) => e.name === event.name).length === 0) return;
 
     if (event.type === EventType.Entity) {
       entity.executeEvent(event);
     } else {
       try {
-        console.log('event');
-        console.log(event);
-
         // eslint-disable-next-line no-eval
         eval(`this.${event.name}(entity)`);
       } catch (err) {

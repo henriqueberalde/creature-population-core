@@ -17,9 +17,9 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Create class Orchestrator
 - [ ] Error treatment
 - [ ] Refactor log messages
-- [ ] Show all entity`s information somehow
-- [ ] Run one turn at time
-- [ ] Terminal interface to interact (yargs)
+- [x] Show all entity`s information somehow
+- [x] Run one turn at time
+- [x] Terminal interface to interact (yargs)
 - [ ] Some kind of persistence
 - [ ] Implement the first application of the concept with a simple creature population
 

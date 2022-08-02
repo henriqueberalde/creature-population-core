@@ -15,19 +15,31 @@ export default class Orchestrator {
     return this.entities;
   }
 
+  public getEntity(id: string): Entity | undefined {
+    return this.entities.find((entity) => entity.id === id);
+  }
+
   public removeEntity(entityId: string): void {
     const index = this.entities.findIndex((entity) => entity.id === entityId);
     this.entities.splice(index, 1);
   }
 
+  private static pauseTime(milliseconds: number): void {
+    const dt = new Date();
+    // eslint-disable-next-line no-loops/no-loops
+    while ((new Date() as any) - (dt as any) <= milliseconds) {
+      /* Do nothing */
+    }
+  }
+
   public executeEventsRecursivly(
     delayInMiliseconds: number = this.defaultDelayInMiliseconds,
   ) {
-    console.log('Starting recursive execution');
-    setTimeout(() => {
-      this.executeTurn();
-      this.executeEventsRecursivly(delayInMiliseconds);
-    }, delayInMiliseconds);
+    Orchestrator.pauseTime(delayInMiliseconds);
+
+    this.executeTurn();
+    this.info();
+    this.executeEventsRecursivly(delayInMiliseconds);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -39,9 +51,13 @@ export default class Orchestrator {
       entity.executeEvent(event);
     } else {
       try {
+        console.log('event');
+        console.log(event);
+
         // eslint-disable-next-line no-eval
         eval(`this.${event.name}(entity)`);
-      } catch {
+      } catch (err) {
+        console.log(err);
         throw new NotFoundEventError(event.name, this);
       }
     }
@@ -64,27 +80,55 @@ export default class Orchestrator {
     return this.getUniqueEvents().filter((event) => event.isEveryTurnEvent);
   }
 
-  private showEntities() {
-    this.entities.forEach((entity) => {
-      console.log(`${entity.id} ${entity.type}`);
-      console.table(entity.events);
-      console.table(entity.fields);
-    });
+  public showEvents() {
+    console.table('EVENTS');
+    const table = this.getUniqueEvents().map(
+      (event) => `${event.name} (${event.type} ${event.type.toString()})`,
+    );
+
+    console.table(table);
   }
 
-  private info() {
-    console.log('EVENTS');
-    console.log(this.getUniqueEvents());
+  public showEntities() {
+    console.table('ENTITIES');
+
+    const table = this.entities.map((entity) => ({
+      id: entity.id,
+      type: entity.type,
+      events: entity.events.map(
+        (event) => `[${event.showType()}] ${event.name}`,
+      ),
+    }));
+
+    console.table(table);
+  }
+
+  public showEntitiesFields() {
+    const table: any = {};
+
+    console.log('FIELDS');
+
+    this.entities.forEach((entity) => {
+      if (entity.fields) {
+        const entries = entity.fields.map((field) => [field.key, field.value]);
+
+        table[entity.id] = Object.fromEntries(entries);
+      }
+    });
+
+    console.table(table);
+  }
+
+  public info() {
     console.log('\n');
-
-    console.log('ENTITIES');
-
-    this.entities.forEach((entity) => {
-      console.log(entity);
-    });
+    this.showEvents();
+    console.log('\n');
+    this.showEntities();
+    console.log('\n');
+    this.showEntitiesFields();
   }
 
-  private executeTurn() {
+  public executeTurn() {
     console.log('Executing events of all entities');
     this.getTurnEvents().forEach((event) => {
       console.log('\n');

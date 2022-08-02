@@ -21,7 +21,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Run one turn at time
 - [x] Terminal interface to interact (yargs)
 - [ ] Some kind of persistence
-- [ ] Implement the first application of the concept with a simple creature population
+- [x] Implement the first application of the concept with a simple creature population
 
 # **Backlog**
 

@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import Event from './event';
 import NotFoundEventError from './not_found_event_error';
 
@@ -11,7 +12,9 @@ export default class Entity {
   public readonly fields: { key: string; value: string }[] = [];
 
   constructor(entity: any) {
-    this.id = entity.id;
+    if (!entity.id) this.id = uuidv4();
+    else this.id = entity.id;
+
     this.type = entity.type;
     this.events = entity.events;
     this.fields = entity.fields;

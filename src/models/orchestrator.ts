@@ -15,20 +15,31 @@ export default class Orchestrator {
     return this.entities;
   }
 
+  public getEntity(id: string): Entity | undefined {
+    return this.entities.find((entity) => entity.id === id);
+  }
+
   public removeEntity(entityId: string): void {
     const index = this.entities.findIndex((entity) => entity.id === entityId);
     this.entities.splice(index, 1);
   }
 
+  private static pauseTime(milliseconds: number): void {
+    const dt = new Date();
+    // eslint-disable-next-line no-loops/no-loops
+    while ((new Date() as any) - (dt as any) <= milliseconds) {
+      /* Do nothing */
+    }
+  }
+
   public executeEventsRecursivly(
     delayInMiliseconds: number = this.defaultDelayInMiliseconds,
   ) {
-    console.log('Starting recursive execution');
-    setTimeout(() => {
-      this.executeTurn();
-      this.executeEventsRecursivly(delayInMiliseconds);
-      this.info();
-    }, delayInMiliseconds);
+    Orchestrator.pauseTime(delayInMiliseconds);
+
+    this.executeTurn();
+    this.info();
+    this.executeEventsRecursivly(delayInMiliseconds);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -40,9 +51,13 @@ export default class Orchestrator {
       entity.executeEvent(event);
     } else {
       try {
+        console.log('event');
+        console.log(event);
+
         // eslint-disable-next-line no-eval
         eval(`this.${event.name}(entity)`);
-      } catch {
+      } catch (err) {
+        console.log(err);
         throw new NotFoundEventError(event.name, this);
       }
     }
@@ -94,9 +109,11 @@ export default class Orchestrator {
     console.log('FIELDS');
 
     this.entities.forEach((entity) => {
-      const entries = entity.fields.map((field) => [field.key, field.value]);
+      if (entity.fields) {
+        const entries = entity.fields.map((field) => [field.key, field.value]);
 
-      table[entity.id] = Object.fromEntries(entries);
+        table[entity.id] = Object.fromEntries(entries);
+      }
     });
 
     console.table(table);
@@ -111,7 +128,7 @@ export default class Orchestrator {
     this.showEntitiesFields();
   }
 
-  private executeTurn() {
+  public executeTurn() {
     console.log('Executing events of all entities');
     this.getTurnEvents().forEach((event) => {
       console.log('\n');

@@ -18,8 +18,8 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [ ] Error treatment
 - [ ] Refactor log messages
 - [x] Show all entity`s information somehow
-- [ ] Run one turn at time
-- [ ] Terminal interface to interact (yargs)
+- [x] Run one turn at time
+- [x] Terminal interface to interact (yargs)
 - [ ] Some kind of persistence
 - [ ] Implement the first application of the concept with a simple creature population
 

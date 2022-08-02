@@ -23,6 +23,18 @@ describe('Orchestrator', () => {
       expect(orchestrator.getEntities()).toMatchObject(entities);
     });
   });
+  describe('getEntity', () => {
+    it('WHEN called THEN returns the coprrect entity', () => {
+      orchestrator.pushEntity(new Entity({ id: 'E1' }));
+      orchestrator.pushEntity(new Entity({ id: 'E2' }));
+      orchestrator.pushEntity(new Entity({ id: 'E3' }));
+
+      const entityFound = orchestrator.getEntity('E3');
+
+      expect(entityFound).not.toBeUndefined();
+      if (entityFound) expect(entityFound.id).toBe('E3');
+    });
+  });
   describe('removeEntity', () => {
     it('WHEN called THEN removes entity from entities list', () => {
       orchestrator.pushEntity(new Entity({ id: 'E1' }));

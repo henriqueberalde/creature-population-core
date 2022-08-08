@@ -1,6 +1,7 @@
 import { config as configDotenv } from 'dotenv';
 import { resolve } from 'path';
 
+// eslint-disable-next-line no-console
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
 switch (process.env.NODE_ENV) {

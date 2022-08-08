@@ -15,13 +15,16 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Create class Entity
 - [x] Create class Event
 - [x] Create class Orchestrator
-- [ ] Error treatment
 - [ ] Refactor log messages
 - [x] Show all entity`s information somehow
 - [x] Run one turn at time
 - [x] Terminal interface to interact (yargs)
-- [ ] Some kind of persistence
 - [x] Implement the first application of the concept with a simple creature population
+- [x] Remove unused packages
+- [ ] Export as a module
+- [ ] Remove cartesian helper (Stering behavior)
+- [ ] Better names for services
+- [ ] Add some kind of persistence
 
 # **Backlog**
 

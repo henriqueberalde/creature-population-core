@@ -14,7 +14,7 @@ export default class EntityService {
   protected context: Context;
 
   public static isEndOfGame(context: Context) {
-    return context.entities.length < 0;
+    return context.entities.length <= 0;
   }
 
   constructor(entity: Entity, context: Context) {

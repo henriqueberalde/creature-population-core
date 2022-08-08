@@ -23,11 +23,7 @@ export default class EntityService {
   }
 
   public calculateWills() {
-    log(
-      this.verbose,
-      'Nothing to do on Entity level',
-      this.context.entities.length,
-    );
+    log(`${this.entity.id} doen\`t need will calculation on entity level`);
   }
 
   public doActions() {
@@ -36,19 +32,14 @@ export default class EntityService {
   }
 
   private getEntityOld() {
-    log(this.verbose, `${this.entity.id} is getting old`);
     this.entity.age += 1;
+    log(`${this.entity.id} has got old, now it is ${this.entity.age}`);
   }
 
   private moveEntity() {
     const directions = ['N', 'L', 'S', 'W'];
     const chosenDirection = directions[getRandomInteger(0, 3)];
 
-    log(
-      this.verbose,
-      `${this.entity.id} is at (${this.entity.x}, ${this.entity.y})`,
-    );
-    log(this.verbose, `Moving ${this.entity.id} to ${chosenDirection}`);
     switch (chosenDirection) {
       case 'N':
         this.entity.y = limitCartesianValue(
@@ -81,10 +72,8 @@ export default class EntityService {
       default:
         break;
     }
-
     log(
-      this.verbose,
-      `${this.entity.id} is now at (${this.entity.x}, ${this.entity.y})`,
+      `${this.entity.id} has moved to ${chosenDirection}, now it is at (${this.entity.x}, ${this.entity.y})`,
     );
   }
 }

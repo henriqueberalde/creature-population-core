@@ -15,7 +15,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Create class Entity
 - [x] Create class Event
 - [x] Create class Orchestrator
-- [ ] Refactor log messages
+- [x] Refactor log messages
 - [x] Show all entity`s information somehow
 - [x] Run one turn at time
 - [x] Terminal interface to interact (yargs)

@@ -34,9 +34,7 @@ const isSet = <T, K extends keyof T>(obj: Partial<T>, prop: K): boolean => {
 const missingEnvs: string[] = [];
 
 [
-  'REDIS_EVENT_STREAM_NAME',
-  'REDIS_EVENT_CONSUMER_NAME',
-  'REDIS_EVENT_CONSUMER_GROUP_NAME',
+  // 'SOME_ENV',
 ].forEach((v) => {
   if (!isSet(process.env, v)) missingEnvs.push(v);
 });
@@ -48,9 +46,7 @@ if (missingEnvs && missingEnvs.length) {
 }
 
 export interface IProcessEnv {
-  REDIS_EVENT_STREAM_NAME: string;
-  REDIS_EVENT_CONSUMER_NAME: string;
-  REDIS_EVENT_CONSUMER_GROUP_NAME: string;
+  // SOME_ENV: string;
 }
 
 declare global {

@@ -2,7 +2,7 @@ import Context from '../models/context';
 import Entity from '../models/entity';
 import EntityService from './entity_service';
 import pauseTime from '../models/helpers/time';
-import { logTable } from '../models/helpers/log';
+import { logTableAndIgnoreVerbose } from '../models/helpers/log';
 
 export default class Orchestrator<T extends EntityService> {
   private verbose = false;
@@ -43,6 +43,6 @@ export default class Orchestrator<T extends EntityService> {
 
     if (this.type.isEndOfGame(this.context)) this.stop = true;
 
-    logTable(true, this.context.entities);
+    logTableAndIgnoreVerbose(this.context.entities);
   }
 }

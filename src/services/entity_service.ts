@@ -7,8 +7,6 @@ import limitCartesianValue, {
 } from '../models/helpers/catesian';
 
 export default class EntityService {
-  protected verbose = false;
-
   protected entity: Entity;
 
   protected context: Context;

@@ -1,4 +1,5 @@
-import EntityService from './entity_service';
 import Orchestrator from './orchestrator';
+import EntityService from './entity_service';
+import CreatureService from './creature_service';
 
-export { EntityService, Orchestrator };
+export { Orchestrator, EntityService, CreatureService };

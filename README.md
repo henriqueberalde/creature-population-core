@@ -21,7 +21,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Terminal interface to interact (yargs)
 - [x] Implement the first application of the concept with a simple creature population
 - [x] Remove unused packages
-- [ ] Export as a module
+- [x] Export as a module
 - [ ] Remove cartesian helper (Stering behavior)
 - [ ] Better names for services
 - [ ] Add some kind of persistence

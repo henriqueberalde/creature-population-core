@@ -5,8 +5,6 @@ import pauseTime from '../models/helpers/time';
 import { logTableAndIgnoreVerbose } from '../models/helpers/log';
 
 export default class Orchestrator<T extends EntityService> {
-  private verbose = false;
-
   private stop = false;
 
   private context;

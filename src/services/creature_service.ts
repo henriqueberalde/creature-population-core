@@ -1,24 +1,31 @@
-import getRandomInteger from '../models/helpers/integer';
 import EntityService from './entity_service';
 import Creature from '../models/creature';
-import { log } from '../models/helpers/log';
+import getRandomInteger from '../models/helpers/integer';
+import { log, logAndIgnoreVerbose } from '../models/helpers/log';
+import limitCartesianValue, {
+  maxCartesianValue,
+} from '../models/helpers/catesian';
+import CreatureQueryService from './creature_query_service';
 
 export default class CreatureService extends EntityService {
   public override calculateWills() {
     super.calculateWills();
+
     this.calculateCreatureWills();
   }
 
   public override doActions() {
     super.doActions();
+
     this.doCreatureActions();
+    CreatureQueryService.removeDeadCreatures(this.context);
   }
 
   private calculateCreatureWills() {
     const creature = this.entity as Creature;
-
     const desireToKillOld = creature.desireToKill;
     const desireToHealOld = creature.desireToHeal;
+
     creature.desireToKill += getRandomInteger(-10, 10);
     creature.desireToHeal += getRandomInteger(-10, 10);
 
@@ -32,26 +39,41 @@ export default class CreatureService extends EntityService {
   }
 
   private doCreatureActions() {
+    this.moveCreature();
+    this.hurtRandomCreatureBasedOnCreatureWill();
+    this.healRandomHurtCreatureBasedOnCreatureWill();
+  }
+
+  private moveCreature() {
     const creature = this.entity as Creature;
+    const directions = ['N', 'L', 'S', 'W'];
+    const chosenDirection = directions[getRandomInteger(0, 3)];
 
-    if (creature.desireToKill > 20) {
-      const targetCreature = this.getRandomCreature();
-
-      this.hurt(targetCreature);
-
-      if (targetCreature.life < 0) {
-        console.log(`${targetCreature.id} is dead!!!`);
-        this.context.entities.splice(
-          this.context.entities.indexOf(targetCreature),
-          1,
-        );
-      }
+    switch (chosenDirection) {
+      case 'N':
+        creature.y = limitCartesianValue(creature.y, 5, maxCartesianValue);
+        break;
+      case 'L':
+        creature.x = limitCartesianValue(creature.x, 5, maxCartesianValue);
+        break;
+      case 'S':
+        creature.y = limitCartesianValue(creature.y, -5, maxCartesianValue);
+        break;
+      case 'W':
+        creature.x = limitCartesianValue(creature.x, -5, maxCartesianValue);
+        break;
+      default:
+        break;
     }
+    log(
+      `${creature.id} has moved to ${chosenDirection}, now it is at (${creature.x}, ${creature.y})`,
+    );
+  }
 
-    const hurtEntities = this.getAllHurtEntities();
-    if (hurtEntities && hurtEntities.length > 0 && creature.desireToHeal > 20) {
-      this.heal(this.getRandomHurtCreature());
-    }
+  private hurtRandomCreatureBasedOnCreatureWill() {
+    if ((this.entity as Creature).desireToKill <= 20) return;
+
+    this.hurt(CreatureQueryService.getRandomCreature(this.context));
   }
 
   private hurt(targetCreature: Creature) {
@@ -60,9 +82,24 @@ export default class CreatureService extends EntityService {
 
     // eslint-disable-next-line no-param-reassign
     targetCreature.life -= hurtAmount;
-    console.log(
+    logAndIgnoreVerbose(
       `${stringHurtAmount} ${this.entity.id} is hurting ${targetCreature.id}; Target\`s life is now: ${targetCreature.life} ${stringHurtAmount}`,
     );
+  }
+
+  private healRandomHurtCreatureBasedOnCreatureWill() {
+    const randomHurtCreature = CreatureQueryService.getRandomHurtCreature(
+      this.context,
+    );
+
+    if (
+      (this.entity as Creature).desireToHeal <= 20 ||
+      randomHurtCreature === undefined
+    ) {
+      return;
+    }
+
+    this.heal(randomHurtCreature);
   }
 
   private heal(healed: Creature) {
@@ -75,32 +112,8 @@ export default class CreatureService extends EntityService {
     // eslint-disable-next-line no-param-reassign
     if (healed.life > 100) healed.life = 100;
 
-    console.log(
+    logAndIgnoreVerbose(
       `${stringHealingAmount} ${healer.id} is healing ${healed.id}; Healed\`s life is now: ${healed.life} ${stringHealingAmount}`,
     );
-  }
-
-  private getAllHurtEntities(): Creature[] {
-    const hurtOnes: Creature[] = [];
-
-    this.context.entities.forEach((entity) => {
-      if ((entity as Creature).life < 100) {
-        hurtOnes.push(entity as Creature);
-      }
-    });
-    return hurtOnes;
-  }
-
-  private getRandomHurtCreature(): Creature {
-    const allHurtEntitites = this.getAllHurtEntities();
-    const randomIndex = getRandomInteger(0, allHurtEntitites.length - 1);
-
-    return allHurtEntitites[randomIndex];
-  }
-
-  private getRandomCreature(): Creature {
-    const randomIndex = getRandomInteger(0, this.context.entities.length - 1);
-
-    return this.context.entities[randomIndex] as Creature;
   }
 }

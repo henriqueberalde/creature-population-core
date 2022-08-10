@@ -23,6 +23,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Remove unused packages
 - [x] Export as a module
 - [ ] Remove cartesian helper (Stering behavior)
+- [ ] Run test, linter and etc on PR
 - [ ] Better names for services
 - [ ] Add some kind of persistence
 

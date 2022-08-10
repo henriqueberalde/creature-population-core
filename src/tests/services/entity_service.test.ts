@@ -7,7 +7,7 @@ let context: Context;
 let service: EntityService;
 
 beforeEach(() => {
-  entity = new Entity('E1', 100, 100);
+  entity = new Entity('E1');
   context = new Context([]);
 });
 

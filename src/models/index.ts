@@ -1,4 +1,5 @@
-import Entity from './entity';
 import Context from './context';
+import Entity from './entity';
+import Creature from './creature';
 
-export { Entity, Context };
+export { Context, Entity, Creature };

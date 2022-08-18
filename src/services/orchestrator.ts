@@ -39,6 +39,12 @@ export default class Orchestrator<T extends EntityService> {
       service.doActions();
     });
 
+    this.context.entities.forEach((entity) => {
+      // eslint-disable-next-line new-cap
+      const service = new this.type(entity, this.context);
+      service.doPostActions();
+    });
+
     if (this.type.isEndOfGame(this.context)) this.stop = true;
 
     logTableAndIgnoreVerbose(this.context.entities);

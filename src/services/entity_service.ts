@@ -24,7 +24,11 @@ export default class EntityService {
     this.getEntityOld();
   }
 
-  private getEntityOld() {
+  public doPostActions() {
+    log(`${this.entity.id} doen\`t need post action`);
+  }
+
+  public getEntityOld() {
     this.entity.age += 1;
     log(`${this.entity.id} has got old, now it is ${this.entity.age}`);
   }

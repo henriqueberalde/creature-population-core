@@ -18,10 +18,13 @@ export default class CreatureService extends EntityService {
     super.doActions();
 
     this.doCreatureActions();
+  }
+
+  public override doPostActions() {
     CreatureQueryService.removeDeadCreatures(this.context);
   }
 
-  private calculateCreatureWills() {
+  public calculateCreatureWills() {
     const creature = this.entity as Creature;
     const desireToKillOld = creature.desireToKill;
     const desireToHealOld = creature.desireToHeal;
@@ -38,13 +41,13 @@ export default class CreatureService extends EntityService {
     );
   }
 
-  private doCreatureActions() {
+  public doCreatureActions() {
     this.moveCreature();
     this.hurtRandomCreatureBasedOnCreatureWill();
     this.healRandomHurtCreatureBasedOnCreatureWill();
   }
 
-  private moveCreature() {
+  public moveCreature() {
     const creature = this.entity as Creature;
     const directions = ['N', 'L', 'S', 'W'];
     const chosenDirection = directions[getRandomInteger(0, 3)];
@@ -70,13 +73,13 @@ export default class CreatureService extends EntityService {
     );
   }
 
-  private hurtRandomCreatureBasedOnCreatureWill() {
+  public hurtRandomCreatureBasedOnCreatureWill() {
     if ((this.entity as Creature).desireToKill <= 20) return;
 
     this.hurt(CreatureQueryService.getRandomCreature(this.context));
   }
 
-  private hurt(targetCreature: Creature) {
+  public hurt(targetCreature: Creature) {
     const hurtAmount = getRandomInteger(1, 10);
     const stringHurtAmount = Array(hurtAmount + 1).join('#');
 
@@ -87,7 +90,7 @@ export default class CreatureService extends EntityService {
     );
   }
 
-  private healRandomHurtCreatureBasedOnCreatureWill() {
+  public healRandomHurtCreatureBasedOnCreatureWill() {
     const randomHurtCreature = CreatureQueryService.getRandomHurtCreature(
       this.context,
     );
@@ -102,7 +105,7 @@ export default class CreatureService extends EntityService {
     this.heal(randomHurtCreature);
   }
 
-  private heal(healed: Creature) {
+  public heal(healed: Creature) {
     const healer = this.entity as Creature;
     const healingAmount = getRandomInteger(1, 10);
     const stringHealingAmount = Array(healingAmount + 1).join('@');

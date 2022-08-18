@@ -13,7 +13,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 # **TODO**
 
 - [x] Create class Entity
-- [x] Create class Event
+- [x] Create class Service
 - [x] Create class Orchestrator
 - [x] Refactor log messages
 - [x] Show all entity`s information somehow
@@ -22,6 +22,9 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Implement the first application of the concept with a simple creature population
 - [x] Remove unused packages
 - [x] Export as a module
+- [ ] Add Stering behavor
+- [ ] Make functions removable of each entity
+- [ ] Centralize fixed parameters
 - [ ] Remove cartesian helper (Stering behavior)
 - [ ] Run lint and test on PR
 - [ ] Better names for services

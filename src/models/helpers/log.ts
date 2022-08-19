@@ -24,7 +24,7 @@ function privateLogTable(
 
 export function log(...args: any[]) {
   // eslint-disable-next-line no-console
-  privateLog(false, ...args);
+  // privateLog(false, ...args);
 }
 
 export function logAndIgnoreVerbose(...args: any[]) {

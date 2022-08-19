@@ -39,11 +39,11 @@ describe('CreatureService', () => {
       context.entities.push(creature);
       service = new CreatureService(creature, context);
 
-      const sumXY = creature.x + creature.y;
+      const sumXY = creature.x() + creature.y();
 
       service.doActions();
 
-      expect(creature.x + creature.y).not.toBe(sumXY);
+      expect(creature.x() + creature.y()).not.toBe(sumXY);
     });
     it('WHEN desireToKill is more than 20 THEN the creature should hurt a random creature', () => {
       creature.desireToKill = 50;

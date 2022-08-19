@@ -48,5 +48,6 @@ export default class Orchestrator<T extends EntityService> {
     if (this.type.isEndOfGame(this.context)) this.stop = true;
 
     logTableAndIgnoreVerbose(this.context.entities);
+    this.context.currentCycle += 1;
   }
 }

@@ -1,11 +1,11 @@
+import { Vector } from 'ts-matrix';
 import EntityService from './entity_service';
 import Creature from '../models/creature';
 import getRandomInteger from '../models/helpers/integer';
 import { log, logAndIgnoreVerbose } from '../models/helpers/log';
-import limitCartesianValue, {
-  maxCartesianValue,
-} from '../models/helpers/catesian';
 import CreatureQueryService from './creature_query_service';
+import MathHelper from '../models/helpers/math_helper';
+import VectorHelper from '../models/helpers/vector_helper';
 
 export default class CreatureService extends EntityService {
   public override calculateWills() {
@@ -15,7 +15,9 @@ export default class CreatureService extends EntityService {
   }
 
   public override doActions() {
-    super.doActions();
+    if (this.context.currentCycle % 3 === 0) {
+      super.doActions();
+    }
 
     this.doCreatureActions();
   }
@@ -43,34 +45,58 @@ export default class CreatureService extends EntityService {
 
   public doCreatureActions() {
     this.moveCreature();
-    this.hurtRandomCreatureBasedOnCreatureWill();
-    this.healRandomHurtCreatureBasedOnCreatureWill();
+
+    if (this.context.currentCycle % 3 === 0) {
+      this.hurtRandomCreatureBasedOnCreatureWill();
+      this.healRandomHurtCreatureBasedOnCreatureWill();
+    }
   }
 
   public moveCreature() {
     const creature = this.entity as Creature;
-    const directions = ['N', 'L', 'S', 'W'];
-    const chosenDirection = directions[getRandomInteger(0, 3)];
+    const distToTarget = creature.position.substract(creature.target).length();
 
-    switch (chosenDirection) {
-      case 'N':
-        creature.y = limitCartesianValue(creature.y, 5, maxCartesianValue);
-        break;
-      case 'L':
-        creature.x = limitCartesianValue(creature.x, 5, maxCartesianValue);
-        break;
-      case 'S':
-        creature.y = limitCartesianValue(creature.y, -5, maxCartesianValue);
-        break;
-      case 'W':
-        creature.x = limitCartesianValue(creature.x, -5, maxCartesianValue);
-        break;
-      default:
-        break;
+    // Decide Target
+
+    if (getRandomInteger(0, 14) === 2) {
+      const x = getRandomInteger(100, 900);
+      const y = getRandomInteger(100, 900);
+      creature.target = new Vector([x, y]);
     }
-    log(
-      `${creature.id} has moved to ${chosenDirection}, now it is at (${creature.x}, ${creature.y})`,
+
+    // Calc acceleration
+    const maxSpeed = 15;
+    const maxSteringForce = 2;
+    const maxAcceleration = 2;
+    const breakingRadius = 400;
+
+    let speed = maxSpeed;
+    const steringForce = maxSteringForce;
+    const acceleration = maxAcceleration;
+
+    if (distToTarget < breakingRadius * creature.velocity.length()) {
+      speed = MathHelper.proportion(distToTarget, 0, 100, 0, maxSpeed);
+    }
+
+    // Seek
+    let desired = creature.target.substract(creature.position);
+    desired = VectorHelper.setMag(desired, speed);
+
+    let stering = desired.substract(creature.velocity);
+    stering = VectorHelper.limit(stering, steringForce);
+
+    creature.acceleration = VectorHelper.mult(creature.acceleration, 0);
+    creature.acceleration = creature.acceleration.add(stering);
+    creature.acceleration = VectorHelper.setMag(
+      creature.acceleration,
+      acceleration,
     );
+
+    // Apply Forces
+    creature.position = creature.position.add(creature.velocity);
+    creature.velocity = creature.velocity.add(creature.acceleration);
+
+    log(`${creature.id} has moved to (${creature.x()}, ${creature.y()})`);
   }
 
   public hurtRandomCreatureBasedOnCreatureWill() {

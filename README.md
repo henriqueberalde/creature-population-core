@@ -22,7 +22,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Implement the first application of the concept with a simple creature population
 - [x] Remove unused packages
 - [x] Export as a module
-- [ ] Add Stering behavor
+- [x] Add Stering behavor
 - [ ] Make functions removable of each entity
 - [ ] Centralize fixed parameters
 - [ ] Remove cartesian helper (Stering behavior)

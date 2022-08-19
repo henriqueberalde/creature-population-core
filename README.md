@@ -35,6 +35,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [ ] Add some kind of persistence
 - [ ] Make a cli project to test new ideas (new repo)
 - [ ] Make an interface project to test new ideas (new repo)
+- [ ] Change the executors objects to lists on orchestrator object (this way many executors can be added, each one to its own purpose)
 - [ ] Export an import like a real npm package
 - [ ] Export the project as umd (to be used as any js file on html) or as commonjs (to be used as a node package)
 

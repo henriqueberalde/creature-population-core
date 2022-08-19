@@ -1,4 +1,7 @@
-export default function getRandomInteger(min: number, max: number): number {
+export default function getRandomIntegerOnRange(
+  min: number,
+  max: number,
+): number {
   const random = Math.random();
 
   const result = Math.floor(random * (max + 1 - min) + min);

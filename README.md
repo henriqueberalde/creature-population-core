@@ -23,12 +23,20 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Remove unused packages
 - [x] Export as a module
 - [x] Add Stering behavor
-- [ ] Make functions removable of each entity
+- [x] Make functions removable of each entity
+- [x] Remove cartesian helper
+- [x] Better names for services
+- [x] Add action behaivor
+- [ ] Refactor all log messages (add message level and type to better toogle them)
+- [ ] Make all automated tests again (after the ruge action refactoring)
+- [ ] Make a kind of EoE test
 - [ ] Centralize fixed parameters
-- [ ] Remove cartesian helper (Stering behavior)
 - [ ] Run lint and test on PR
-- [ ] Better names for services
 - [ ] Add some kind of persistence
+- [ ] Make a cli project to test new ideas (new repo)
+- [ ] Make an interface project to test new ideas (new repo)
+- [ ] Export an import like a real npm package
+- [ ] Export the project as umd (to be used as any js file on html) or as commonjs (to be used as a node package)
 
 # **Backlog**
 
@@ -46,17 +54,17 @@ A generic environment built with genetic algorithm for experiments on colony (po
 
 # Bomberman Idea
 
-- [ ] `Every turn`: all creatures get old
-- [ ] `Every turn`: all creatures move
-- [ ] Natural movement simulation
+- [x] `Every turn`: all creatures get old
+- [x] `Every turn`: all creatures move
+- [x] Natural movement simulation
 - [ ] `Every turn`: Fit explode ou heal will based on how much damage or healing the creature got
 - [ ] `Every turn`: Calculate the average will of explode or heal of all creatures and save it on the World
 - [ ] `On Born`: Gets a strength from its father `genetic algorithm`
 - [ ] `On Born`: Gets a range from its father `genetic algorithm`
 - [ ] `On Born`: Gets a speed from its father `genetic algorithm`
-- [ ] `On Born`: Gets age = 0
-- [ ] `On Explode`: Deals X damage, based on its strength, to near creatures
-- [ ] `On Explode`: Deals damage on X, based on its range, creatures
-- [ ] `On Heal`: Heals X amount of life, based on its strength, to near creatures
-- [ ] `On Heal`: Heals X, based on its range, creatures
+- [x] `On Born`: Gets age = 0
+- [x] `On Explode`: Deals X damage, based on its strength, to near creatures
+- [x] `On Explode`: Deals damage on X, based on its range, creatures
+- [x] `On Heal`: Heals X amount of life, based on its strength, to near creatures
+- [x] `On Heal`: Heals X, based on its range, creatures
 - [ ] `On Die`: A new creature is generated based on its self `genetic algorithm`

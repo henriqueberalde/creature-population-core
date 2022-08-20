@@ -1,50 +1,83 @@
-import Logger from './logger';
+/* eslint-disable no-console */
+import { Logger, LogMessageContext, LogMessageLevel } from './logger';
 
 export default class ConsoleLogger implements Logger {
+  private level: LogMessageLevel | undefined;
+
+  private contexts: LogMessageContext[];
+
+  constructor(level?: LogMessageLevel, contexts?: LogMessageContext[]) {
+    const defaultContexts = [
+      LogMessageContext.Action,
+      LogMessageContext.EntityExecutor,
+      LogMessageContext.Orchestrator,
+      LogMessageContext.OrchestratorExecutor,
+    ];
+    const shouldSetDefault = contexts !== undefined && contexts.length > 0;
+
+    this.contexts = shouldSetDefault ? contexts : defaultContexts;
+
+    this.level = level;
+  }
+
   // eslint-disable-next-line class-methods-use-this
-  private isVerbose(): boolean {
-    const envVerbose = process.env.VERBOSE;
+  private getLevelValue(): number {
+    let resultLevel: string | undefined;
+    const envLevel = process.env.LOGGER_LEVEL;
 
-    return !(envVerbose === 'false');
-  }
+    const levels: string[] = [
+      'Trace',
+      'Debug',
+      'Info',
+      'Warn',
+      'Error',
+      'Fatal',
+    ];
 
-  private privateLog(ignoreVerbose: boolean, ...args: any[]) {
-    if (ignoreVerbose || this.isVerbose()) {
-      // eslint-disable-next-line no-console
-      console.log(...args);
+    if (envLevel) {
+      resultLevel = envLevel;
     }
+
+    if (this.level !== undefined) {
+      resultLevel = LogMessageLevel[this.level];
+    } else if (envLevel !== undefined) {
+      resultLevel = envLevel;
+    } else {
+      resultLevel = LogMessageLevel[LogMessageLevel.Warn];
+    }
+
+    return levels.indexOf(resultLevel);
   }
 
-  private privateLogTable(
-    ignoreVerbose: boolean,
-    tabularData: any,
-    properties?: readonly string[] | undefined,
+  private shouldLog(
+    level: LogMessageLevel,
+    context: LogMessageContext,
+  ): boolean {
+    const systemLevel = this.getLevelValue();
+    const hasValidLevel = systemLevel <= level;
+    const hasValidContext = this.contexts.includes(context);
+
+    return hasValidLevel && hasValidContext;
+  }
+
+  public log(
+    level: LogMessageLevel,
+    context: LogMessageContext,
+    ...args: any[]
   ) {
-    if (ignoreVerbose || this.isVerbose()) {
-      // eslint-disable-next-line no-console
-      console.table(tabularData, properties);
+    if (this.shouldLog(level, context)) {
+      console.log(LogMessageLevel[level], LogMessageContext[context], ...args);
     }
-  }
-
-  public log(...args: any[]) {
-    this.privateLog(false, ...args);
-  }
-
-  public logAndIgnoreVerbose(...args: any[]) {
-    this.privateLog(true, ...args);
   }
 
   public logTable(
+    level: LogMessageLevel,
+    context: LogMessageContext,
     tabularData: any,
     properties?: readonly string[] | undefined,
   ) {
-    this.privateLogTable(false, tabularData, properties);
-  }
-
-  public logTableAndIgnoreVerbose(
-    tabularData: any,
-    properties?: readonly string[] | undefined,
-  ) {
-    this.privateLogTable(true, tabularData, properties);
+    if (this.shouldLog(level, context)) {
+      console.table(tabularData, properties);
+    }
   }
 }

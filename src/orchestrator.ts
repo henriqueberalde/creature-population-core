@@ -7,7 +7,7 @@ import EDefaultActionExecutor from './executors/entity/default_action_executor';
 import EntityActionExecutor from './executors/entity/action_executor';
 import ODefaultActionExecutor from './executors/orchestrator/default_action_executor';
 import OrchestratorActionExecutor from './executors/orchestrator/action_executor';
-import Logger from './utils/logger';
+import { Logger, LogMessageContext, LogMessageLevel } from './utils/logger';
 import ConsoleLogger from './utils/console_logger';
 
 export default class Orchestrator {
@@ -61,6 +61,20 @@ export default class Orchestrator {
     this.logger = logger !== undefined ? logger : new ConsoleLogger();
 
     if (actions) this.actions = actions;
+
+    this.logger.log(
+      LogMessageLevel.Trace,
+      LogMessageContext.Orchestrator,
+      `[OrchestratorContructor] Entities.length:${
+        entities.length
+      }, actions:(${this.actions?.map((a) => a.name).join(', ')}), context:${
+        this.context.constructor.name
+      }, entityActionExecutor:${
+        this.entityActionExecutor.constructor.name
+      }, orchestratorActionExecutor:${
+        this.orchestratorActionExecutor.constructor.name
+      }, logger:${this.logger.constructor.name}`,
+    );
   }
 
   public executeTurnRecursive(delay: number) {
@@ -75,24 +89,53 @@ export default class Orchestrator {
   public executeTurn() {
     const sortedUniquePriorities = this.sortedUniquePriorities();
 
+    this.logger.log(
+      LogMessageLevel.Trace,
+      LogMessageContext.Orchestrator,
+      `[executeTurn] Executing Turn; Cycle:${
+        this.context.currentCycle
+      }, Priorities:(${sortedUniquePriorities.join(', ')})`,
+    );
+
     sortedUniquePriorities.forEach((priority) => {
-      this.executeActionsByPriorityAndCycle(priority);
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Orchestrator,
+        `[executeTurn] Executing Priority:${priority}`,
+      );
+      this.executeOrchestratorActionsByPriorityAndCycle(priority);
       this.executeEntitiesActionsByPriorityAndCycle(priority);
     });
 
     if (this.isEndOfGame(this.context)) this.stop = true;
 
-    this.logger.logTableAndIgnoreVerbose(this.context.entities);
     this.context.currentCycle += 1;
   }
 
-  public executeActionsByPriorityAndCycle(priority: number) {
+  public executeOrchestratorActionsByPriorityAndCycle(priority: number) {
     const actionsToExecute = this.actions.filter(
       (a) => a.priority === priority && this.isValidCycle(a.cicleAmount),
     );
 
+    if (actionsToExecute.length > 0) {
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Orchestrator,
+        `[executeOrchestratorActionsByPriorityAndCycle] Orchestrator Actions to execute:(${actionsToExecute
+          .map((a) => a.name)
+          .join(', ')}), priority:${priority}, cycle:${
+          this.context.currentCycle
+        }, all actions:(${this.actions.map((a) => a.name).join(', ')})`,
+      );
+    }
+
     // eslint-disable-next-line arrow-body-style
     actionsToExecute.forEach((action) => {
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Orchestrator,
+        `[executeOrchestrationActions] Executing action; Action:${action.name}`,
+      );
       return this.orchestratorActionExecutor.execute(action);
     });
   }
@@ -103,6 +146,16 @@ export default class Orchestrator {
         (a) => a.priority === priority && this.isValidCycle(a.cicleAmount),
       );
 
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Orchestrator,
+        `[executeEntitiesActionsByPriorityAndCycle] Entity Actions to execute:(${actionsToExecute
+          .map((a) => a.name)
+          .join(', ')}), entity:${entity.id}, priority:${priority}, cycle:${
+          this.context.currentCycle
+        }, all actions:(${entity.actions.map((a) => a.name).join(', ')})`,
+      );
+
       this.executeEntityActions(entity, actionsToExecute);
     });
   }
@@ -110,6 +163,11 @@ export default class Orchestrator {
   public executeEntityActions(entity: Entity, actions: Action[]): void {
     // eslint-disable-next-line arrow-body-style
     actions.forEach((action) => {
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Orchestrator,
+        `[executeEntityActions] Executing entity action; Entity:${entity.id}, action:${action.name}`,
+      );
       return this.entityActionExecutor.execute(entity, action);
     });
   }

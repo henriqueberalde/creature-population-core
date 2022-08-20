@@ -4,7 +4,7 @@ import { Context, Creature } from '../../entities';
 import Action from '../../entities/action';
 import Entity from '../../entities/entity';
 import ConsoleLogger from '../../utils/console_logger';
-import Logger from '../../utils/logger';
+import { Logger, LogMessageLevel, LogMessageContext } from '../../utils/logger';
 import MathHelper from '../../utils/math_helper';
 import getRandomIntegerOnRange from '../../utils/random_integer_on_range';
 import VectorHelper from '../../utils/vector_helper';
@@ -16,9 +16,15 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
   protected logger: Logger;
 
   constructor(context: Context, logger?: Logger) {
-    super();
+    super(logger);
     this.context = context;
     this.logger = logger !== undefined ? logger : new ConsoleLogger();
+
+    this.logger.log(
+      LogMessageLevel.Trace,
+      LogMessageContext.EntityExecutor,
+      `[CreatureEntityActionExecutorConstructor] Logger: ${this.logger.constructor.name}`,
+    );
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -50,14 +56,17 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     const desireToHealOld = creature.desireToHeal;
 
     creature.desireToKill += getRandomIntegerOnRange(-10, 10);
-    creature.desireToHeal += getRandomIntegerOnRange(-10, 10);
-
-    this.logger.log('Wills');
     this.logger.log(
-      `${creature.id} DesireToKill ${desireToKillOld} => ${creature.desireToKill}`,
+      LogMessageLevel.Info,
+      LogMessageContext.Action,
+      `[calculateWills] ${creature.id} DesireToKill ${desireToKillOld} => ${creature.desireToKill}`,
     );
+
+    creature.desireToHeal += getRandomIntegerOnRange(-10, 10);
     this.logger.log(
-      `${creature.id} DesireToHeal ${desireToHealOld} => ${creature.desireToHeal}`,
+      LogMessageLevel.Info,
+      LogMessageContext.Action,
+      `[calculateWills] ${creature.id} DesireToHeal ${desireToHealOld} => ${creature.desireToHeal}`,
     );
   }
 
@@ -69,6 +78,12 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
       const x = getRandomIntegerOnRange(100, 900);
       const y = getRandomIntegerOnRange(100, 900);
       creature.target = new Vector([x, y]);
+
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Action,
+        `[move] ${creature.id} has taken a new target location: (${creature.target.values[0]}, ${creature.target.values[1]})`,
+      );
     }
 
     // Calc acceleration
@@ -83,6 +98,13 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
 
     if (distToTarget < breakingRadius * creature.velocity.length()) {
       speed = MathHelper.proportion(distToTarget, 0, 100, 0, maxSpeed);
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Action,
+        `[move] ${
+          creature.id
+        } started to break because of distToTarget < breakingRadius * creature.velocity.length(); distToTarget:${distToTarget}, breakingRadius:${breakingRadius}, creature.velocity.length():${creature.velocity.length()}; Calculated speed: ${speed}, maxSpeed: ${maxSpeed}`,
+      );
     }
 
     // Seek
@@ -104,7 +126,9 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     creature.velocity = creature.velocity.add(creature.acceleration);
 
     this.logger.log(
-      `${creature.id} has moved to (${creature.x()}, ${creature.y()})`,
+      LogMessageLevel.Info,
+      LogMessageContext.Action,
+      `[move] ${creature.id} has moved to (${creature.x()}, ${creature.y()})`,
     );
   }
 
@@ -116,21 +140,28 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
 
   public hurt(creature: Creature, targetCreature: Creature) {
     const hurtAmount = getRandomIntegerOnRange(1, 10);
-    const stringHurtAmount = Array(hurtAmount + 1).join('#');
 
     targetCreature.life -= hurtAmount;
+    this.logger.log(
+      LogMessageLevel.Info,
+      LogMessageContext.Action,
+      `[hurt] ${creature.id} hurt ${targetCreature.id} this amount:${hurtAmount}; Target\`s life is now: ${targetCreature.life}`,
+    );
 
     this.setCreatureAsDeadIfSo(creature as Creature);
-
-    this.logger.logAndIgnoreVerbose(
-      `${stringHurtAmount} ${creature.id} is hurting ${targetCreature.id}; Target\`s life is now: ${targetCreature.life} ${stringHurtAmount}`,
-    );
   }
 
   public healRandomHurtCreatureBasedOnCreatureWill(creature: Creature) {
     const randomHurtCreature = this.getRandomHurtCreature();
 
     if (creature.desireToHeal <= 20 || randomHurtCreature === undefined) {
+      if (creature.desireToHeal > 20) {
+        this.logger.log(
+          LogMessageLevel.Trace,
+          LogMessageContext.Action,
+          `[heal] ${creature.id} wants to heal someone (desireToHeal: ${creature.desireToHeal}) but there was no creature hurted`,
+        );
+      }
       return;
     }
 
@@ -138,23 +169,28 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
   }
 
   public heal(creature: Creature, healed: Creature) {
-    const healer = creature as Creature;
     const healingAmount = getRandomIntegerOnRange(1, 10);
-    const stringHealingAmount = Array(healingAmount + 1).join('@');
 
     healed.life += healingAmount;
-
     if (healed.life > 100) healed.life = 100;
 
-    this.logger.logAndIgnoreVerbose(
-      `${stringHealingAmount} ${healer.id} is healing ${healed.id}; Healed\`s life is now: ${healed.life} ${stringHealingAmount}`,
+    this.logger.log(
+      LogMessageLevel.Info,
+      LogMessageContext.Action,
+      `[heal] ${creature.id} heals ${healed.id} this amount:${healingAmount}; Healed\`s life is now: ${healed.life}`,
     );
   }
 
-  // eslint-disable-next-line class-methods-use-this
   public setCreatureAsDeadIfSo(creature: Creature) {
-    // eslint-disable-next-line no-param-reassign
     creature.isDead = creature.life <= 0;
+
+    if (creature.isDead) {
+      this.logger.log(
+        LogMessageLevel.Info,
+        LogMessageContext.Action,
+        `[setCreatureAsDeadIfSo] ${creature.id} was set to dead; life: ${creature.life}`,
+      );
+    }
   }
 
   public getRandomCreature(): Creature {

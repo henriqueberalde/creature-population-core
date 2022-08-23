@@ -23,9 +23,7 @@ export default class Creature extends Entity {
 
   public breakingRadius: number = 400;
 
-  public desireToKill: number;
-
-  public desireToHeal: number;
+  public desireToKillOrHeal: number;
 
   public isDead: boolean;
 
@@ -51,8 +49,7 @@ export default class Creature extends Entity {
     }
 
     this.life = 100;
-    this.desireToKill = 0;
-    this.desireToHeal = 0;
+    this.desireToKillOrHeal = 0;
     this.isDead = this.life <= 0;
 
     this.actions.push(

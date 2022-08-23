@@ -52,21 +52,13 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
   }
 
   protected calculateWills(creature: Creature) {
-    const desireToKillOld = creature.desireToKill;
-    const desireToHealOld = creature.desireToHeal;
+    const desireToKillOrHealOld = creature.desireToKillOrHeal;
 
-    creature.desireToKill += getRandomIntegerOnRange(-10, 10);
+    creature.desireToKillOrHeal += getRandomIntegerOnRange(-10, 10);
     this.logger.log(
       LogMessageLevel.Info,
       LogMessageContext.Action,
-      `[calculateWills] ${creature.id} DesireToKill ${desireToKillOld} => ${creature.desireToKill}`,
-    );
-
-    creature.desireToHeal += getRandomIntegerOnRange(-10, 10);
-    this.logger.log(
-      LogMessageLevel.Info,
-      LogMessageContext.Action,
-      `[calculateWills] ${creature.id} DesireToHeal ${desireToHealOld} => ${creature.desireToHeal}`,
+      `[calculateWills] ${creature.id} desireToKillOrHeal ${desireToKillOrHealOld} => ${creature.desireToKillOrHeal}`,
     );
   }
 
@@ -131,7 +123,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
   }
 
   protected hurtRandomCreatureBasedOnCreatureWill(creature: Creature) {
-    if (creature.desireToKill <= 20) return;
+    if (creature.desireToKillOrHeal <= 20) return;
 
     this.hurt(creature, this.getRandomCreature());
   }
@@ -152,12 +144,15 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
   protected healRandomHurtCreatureBasedOnCreatureWill(creature: Creature) {
     const randomHurtCreature = this.getRandomHurtCreature();
 
-    if (creature.desireToHeal <= 20 || randomHurtCreature === undefined) {
-      if (creature.desireToHeal > 20) {
+    if (
+      creature.desireToKillOrHeal >= -20 ||
+      randomHurtCreature === undefined
+    ) {
+      if (creature.desireToKillOrHeal < -20) {
         this.logger.log(
           LogMessageLevel.Trace,
           LogMessageContext.Action,
-          `[heal] ${creature.id} wants to heal someone (desireToHeal: ${creature.desireToHeal}) but there was no creature hurted`,
+          `[heal] ${creature.id} wants to heal someone (desireToKillOrHeal: ${creature.desireToKillOrHeal}) but there was no creature hurted`,
         );
       }
       return;

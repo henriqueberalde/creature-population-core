@@ -30,8 +30,7 @@ describe('Creature', () => {
         expect(creature.breakingRadius).toBe(400);
       });
       it('fixed will props are set', () => {
-        expect(creature.desireToKill).toBe(0);
-        expect(creature.desireToHeal).toBe(0);
+        expect(creature.desireToKillOrHeal).toBe(0);
       });
       it('fixed actions are set', () => {
         expect(creature.actions[0].name).toBe('getOld');

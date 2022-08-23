@@ -15,13 +15,25 @@ export default class Creature extends Entity {
 
   public target: Vector;
 
-  public desireToKill: number;
+  public maxSpeed: number = 15;
 
-  public desireToHeal: number;
+  public maxSteringForce: number = 2;
+
+  public maxAcceleration: number = 2;
+
+  public breakingRadius: number = 400;
+
+  public desireToKillOrHeal: number;
 
   public isDead: boolean;
 
-  constructor(id: string, x: number, y: number, actions?: Action[]) {
+  constructor(
+    id: string,
+    x: number,
+    y: number,
+    actions?: Action[],
+    maxSpeed?: number,
+  ) {
     super(id, actions);
 
     this.position = new Vector([x, y]);
@@ -32,9 +44,12 @@ export default class Creature extends Entity {
       getRandomIntegerOnRange(100, 900),
     ]);
 
+    if (maxSpeed !== undefined) {
+      this.maxSpeed = maxSpeed;
+    }
+
     this.life = 100;
-    this.desireToKill = 0;
-    this.desireToHeal = 0;
+    this.desireToKillOrHeal = 0;
     this.isDead = this.life <= 0;
 
     this.actions.push(

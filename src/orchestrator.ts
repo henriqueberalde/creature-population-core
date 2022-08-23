@@ -173,7 +173,7 @@ export default class Orchestrator {
 
   private filterActionsByPriorityAndCycle(actions: Action[], priority: number) {
     return actions.filter(
-      (a) => a.priority === priority && this.isValidCycle(a.cicleAmount),
+      (a) => a.priority === priority && this.isValidCycle(a.cycleAmount),
     );
   }
 

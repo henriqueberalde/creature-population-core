@@ -45,7 +45,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Start with n creatures
 - [x] All creatures move (naturaly)
 - [x] Each Creature have diferent maxspeed
-- [ ] `Creature will` Kill or heal (unified)
+- [x] `Creature will` Kill or heal (unified)
 - [ ] `Creature action`: Hurt or heal only creatures that are close (diferent ranges), can miss if the other walks away
 - [ ] `Creature will`: Decide creatures target based on kill or heal desire
 

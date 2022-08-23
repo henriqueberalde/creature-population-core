@@ -5,7 +5,7 @@ export default class Action {
 
   public priority: number;
 
-  public cicleAmount: number;
+  public cycleAmount: number;
 
   // public testWillFunction: boolean;
 
@@ -14,7 +14,7 @@ export default class Action {
   constructor(name: string, priority?: number, cycleAmount?: number) {
     this.name = name;
     this.priority = priority !== undefined ? priority : Priority.ActionPriority;
-    this.cicleAmount =
+    this.cycleAmount =
       cycleAmount !== undefined ? cycleAmount : CycleAmount.ActionCycle;
   }
 }

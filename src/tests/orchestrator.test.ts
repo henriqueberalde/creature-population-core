@@ -15,11 +15,6 @@ beforeEach(() => {
 });
 
 describe('Orchestrator', () => {
-  describe('executeTurnRecursive', () => {
-    it('don`t know how to test it', () => {
-      expect(true).toBe(true);
-    });
-  });
   describe('executeTurn', () => {
     describe('Orchestrator Actions', () => {
       it('When many repeated priorities then execute only one of each', () => {

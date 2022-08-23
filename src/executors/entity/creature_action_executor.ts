@@ -86,24 +86,22 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
       );
     }
 
-    // Calc acceleration
-    const maxSpeed = 15;
-    const maxSteringForce = 2;
-    const maxAcceleration = 2;
-    const breakingRadius = 400;
+    let speed = creature.maxSpeed;
+    const steringForce = creature.maxSteringForce;
+    const acceleration = creature.maxAcceleration;
 
-    let speed = maxSpeed;
-    const steringForce = maxSteringForce;
-    const acceleration = maxAcceleration;
-
-    if (distToTarget < breakingRadius * creature.velocity.length()) {
-      speed = MathHelper.proportion(distToTarget, 0, 100, 0, maxSpeed);
+    if (distToTarget < creature.breakingRadius * creature.velocity.length()) {
+      speed = MathHelper.proportion(distToTarget, 0, 100, 0, creature.maxSpeed);
       this.logger.log(
         LogMessageLevel.Trace,
         LogMessageContext.Action,
         `[move] ${
           creature.id
-        } started to break because of distToTarget < breakingRadius * creature.velocity.length(); distToTarget:${distToTarget}, breakingRadius:${breakingRadius}, creature.velocity.length():${creature.velocity.length()}; Calculated speed: ${speed}, maxSpeed: ${maxSpeed}`,
+        } started to break because of distToTarget < breakingRadius * creature.velocity.length(); distToTarget:${distToTarget}, breakingRadius:${
+          creature.breakingRadius
+        }, creature.velocity.length():${creature.velocity.length()}; Calculated speed: ${speed}, maxSpeed: ${
+          creature.maxSpeed
+        }`,
       );
     }
 

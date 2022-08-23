@@ -34,8 +34,11 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     const creature = entity as Creature;
 
     switch (action.name) {
-      case 'calculateWills':
-        this.calculateWills(creature);
+      case 'updateDesireToKillOrHeall':
+        this.updateDesireToKillOrHeal(creature);
+        break;
+      case 'defineTarget':
+        this.defineTarget(creature);
         break;
       case 'move':
         this.move(creature);
@@ -51,21 +54,21 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     }
   }
 
-  protected calculateWills(creature: Creature) {
+  protected updateDesireToKillOrHeal(creature: Creature) {
     const desireToKillOrHealOld = creature.desireToKillOrHeal;
 
     creature.desireToKillOrHeal += getRandomIntegerOnRange(-10, 10);
+
+    this.defineTarget(creature);
+
     this.logger.log(
       LogMessageLevel.Info,
       LogMessageContext.Action,
-      `[calculateWills] ${creature.id} desireToKillOrHeal ${desireToKillOrHealOld} => ${creature.desireToKillOrHeal}`,
+      `[updatreDesireToKillOrHeal] ${creature.id} desireToKillOrHeal ${desireToKillOrHealOld} => ${creature.desireToKillOrHeal}`,
     );
   }
 
-  protected move(creature: Creature) {
-    const distToTarget = creature.position.substract(creature.target).length();
-
-    // Decide Target
+  protected defineTarget(creature: Creature) {
     if (getRandomIntegerOnRange(0, 14) === 2) {
       const x = getRandomIntegerOnRange(100, 900);
       const y = getRandomIntegerOnRange(100, 900);
@@ -74,9 +77,13 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
       this.logger.log(
         LogMessageLevel.Trace,
         LogMessageContext.Action,
-        `[move] ${creature.id} has taken a new target location: (${creature.target.values[0]}, ${creature.target.values[1]})`,
+        `[defineTarget] ${creature.id} has taken a new target location: (${creature.target.values[0]}, ${creature.target.values[1]})`,
       );
     }
+  }
+
+  protected move(creature: Creature) {
+    const distToTarget = creature.position.substract(creature.target).length();
 
     let speed = creature.maxSpeed;
     const steringForce = creature.maxSteringForce;

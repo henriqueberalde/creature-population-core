@@ -54,7 +54,14 @@ export default class Creature extends Entity {
 
     this.actions.push(
       new Action(
-        'calculateWills',
+        'updateDesireToKillOrHeal',
+        Priority.WillPriority,
+        CycleAmount.ActionCycle,
+      ),
+    );
+    this.actions.push(
+      new Action(
+        'defineTarget',
         Priority.WillPriority,
         CycleAmount.ActionCycle,
       ),

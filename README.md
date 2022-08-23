@@ -29,8 +29,8 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Add action behaivor
 - [x] Refactor all log messages (add message level and type to better toogle them)
 - [x] Make all automated tests again (after the ruge action refactoring)
-- [ ] Make a kind of EoE test
 - [ ] Centralize fixed parameters
+- [ ] Make a kind of EoE test
 - [ ] Run lint and test on PR
 - [ ] Add some kind of persistence
 - [ ] Add posibility of go turns back and forth (persist every turn and entities state)
@@ -47,6 +47,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [ ] Each Creature have diferent maxspeed
 - [ ] `Creature will` Kill or heal (unified)
 - [ ] `Creature action`: Hurt or heal only creatures that are close (diferent ranges), can miss if the other walks away
+- [ ] Make creatures move`s target based on who it want to heal or kill
 
 # Superhero Idea
 

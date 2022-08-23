@@ -28,7 +28,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Better names for services
 - [x] Add action behaivor
 - [x] Refactor all log messages (add message level and type to better toogle them)
-- [ ] Make all automated tests again (after the ruge action refactoring)
+- [x] Make all automated tests again (after the ruge action refactoring)
 - [ ] Make a kind of EoE test
 - [ ] Centralize fixed parameters
 - [ ] Run lint and test on PR
@@ -68,7 +68,7 @@ A generic environment built with genetic algorithm for experiments on colony (po
 - [x] Start with n bombermen
 - [x] `Bomberman Will`: desire to plant a bomb
 - [x] `Bomberman Action`: Plant a bomb
-- [x] `Bomb Action`: Explode; Aply damage on every bomberman on the range 
+- [x] `Bomb Action`: Explode; Aply damage on every bomberman on the range
 
 # **Backlog**
 

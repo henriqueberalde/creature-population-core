@@ -7,6 +7,6 @@ export default class Context {
 
   constructor(entities: Entity[]) {
     this.entities = entities;
-    this.currentCycle = 0;
+    this.currentCycle = 1;
   }
 }

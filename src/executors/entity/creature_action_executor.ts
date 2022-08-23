@@ -51,7 +51,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     }
   }
 
-  private calculateWills(creature: Creature) {
+  protected calculateWills(creature: Creature) {
     const desireToKillOld = creature.desireToKill;
     const desireToHealOld = creature.desireToHeal;
 
@@ -70,7 +70,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     );
   }
 
-  public move(creature: Creature) {
+  protected move(creature: Creature) {
     const distToTarget = creature.position.substract(creature.target).length();
 
     // Decide Target
@@ -132,13 +132,13 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     );
   }
 
-  public hurtRandomCreatureBasedOnCreatureWill(creature: Creature) {
+  protected hurtRandomCreatureBasedOnCreatureWill(creature: Creature) {
     if (creature.desireToKill <= 20) return;
 
     this.hurt(creature, this.getRandomCreature());
   }
 
-  public hurt(creature: Creature, targetCreature: Creature) {
+  protected hurt(creature: Creature, targetCreature: Creature) {
     const hurtAmount = getRandomIntegerOnRange(1, 10);
 
     targetCreature.life -= hurtAmount;
@@ -151,7 +151,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     this.setCreatureAsDeadIfSo(creature as Creature);
   }
 
-  public healRandomHurtCreatureBasedOnCreatureWill(creature: Creature) {
+  protected healRandomHurtCreatureBasedOnCreatureWill(creature: Creature) {
     const randomHurtCreature = this.getRandomHurtCreature();
 
     if (creature.desireToHeal <= 20 || randomHurtCreature === undefined) {
@@ -168,7 +168,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     this.heal(creature, randomHurtCreature);
   }
 
-  public heal(creature: Creature, healed: Creature) {
+  protected heal(creature: Creature, healed: Creature) {
     const healingAmount = getRandomIntegerOnRange(1, 10);
 
     healed.life += healingAmount;
@@ -181,7 +181,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     );
   }
 
-  public setCreatureAsDeadIfSo(creature: Creature) {
+  protected setCreatureAsDeadIfSo(creature: Creature) {
     creature.isDead = creature.life <= 0;
 
     if (creature.isDead) {
@@ -193,7 +193,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     }
   }
 
-  public getRandomCreature(): Creature {
+  protected getRandomCreature(): Creature {
     const randomIndex = getRandomIntegerOnRange(
       0,
       this.context.entities.length - 1,
@@ -202,7 +202,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     return this.context.entities[randomIndex] as Creature;
   }
 
-  public getRandomHurtCreature(): Creature | undefined {
+  protected getRandomHurtCreature(): Creature | undefined {
     const allHurtEntitites = this.getAllHurtCreatures();
 
     if (allHurtEntitites.length === 0) return undefined;
@@ -212,7 +212,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     ];
   }
 
-  public getAllHurtCreatures(): Creature[] {
+  protected getAllHurtCreatures(): Creature[] {
     return this.context.entities
       .filter((entity) => (entity as Creature).life < 100)
       .map((e) => e as Creature);

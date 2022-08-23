@@ -36,6 +36,7 @@ export default class Orchestrator {
     logger?: Logger,
     isEndOfGame?: { (context: Context): boolean },
   );
+
   constructor(
     entities: Entity[],
     actions?: Action[],
@@ -112,67 +113,71 @@ export default class Orchestrator {
     this.context.currentCycle += 1;
   }
 
-  public executeOrchestratorActionsByPriorityAndCycle(priority: number) {
-    const actionsToExecute = this.actions.filter(
-      (a) => a.priority === priority && this.isValidCycle(a.cicleAmount),
+  private executeOrchestratorActionsByPriorityAndCycle(priority: number) {
+    const actionsToExecute = this.filterActionsByPriorityAndCycle(
+      this.actions,
+      priority,
     );
 
-    if (actionsToExecute.length > 0) {
-      this.logger.log(
-        LogMessageLevel.Trace,
-        LogMessageContext.Orchestrator,
-        `[executeOrchestratorActionsByPriorityAndCycle] Orchestrator Actions to execute:(${actionsToExecute
-          .map((a) => a.name)
-          .join(', ')}), priority:${priority}, cycle:${
-          this.context.currentCycle
-        }, all actions:(${this.actions.map((a) => a.name).join(', ')})`,
-      );
-    }
-
-    // eslint-disable-next-line arrow-body-style
-    actionsToExecute.forEach((action) => {
-      this.logger.log(
-        LogMessageLevel.Trace,
-        LogMessageContext.Orchestrator,
-        `[executeOrchestrationActions] Executing action; Action:${action.name}`,
-      );
-      return this.orchestratorActionExecutor.execute(action);
-    });
+    this.executeActions(actionsToExecute, undefined);
   }
 
-  public executeEntitiesActionsByPriorityAndCycle(priority: number): void {
+  private executeEntitiesActionsByPriorityAndCycle(priority: number): void {
     this.context.entities.forEach((entity) => {
-      const actionsToExecute = entity.actions.filter(
-        (a) => a.priority === priority && this.isValidCycle(a.cicleAmount),
+      const actionsToExecute = this.filterActionsByPriorityAndCycle(
+        entity.actions,
+        priority,
       );
 
       this.logger.log(
         LogMessageLevel.Trace,
         LogMessageContext.Orchestrator,
-        `[executeEntitiesActionsByPriorityAndCycle] Entity Actions to execute:(${actionsToExecute
-          .map((a) => a.name)
-          .join(', ')}), entity:${entity.id}, priority:${priority}, cycle:${
+        `[executeEntitiesActionsByPriorityAndCycle] Entity:${
+          entity.id
+        }, priority:${priority}, cycle:${
           this.context.currentCycle
         }, all actions:(${entity.actions.map((a) => a.name).join(', ')})`,
       );
 
-      this.executeEntityActions(entity, actionsToExecute);
+      this.executeActions(actionsToExecute, entity);
     });
   }
 
-  public executeEntityActions(entity: Entity, actions: Action[]): void {
-    // eslint-disable-next-line arrow-body-style
-    actions.forEach((action) => {
+  private executeActions(actionsToExecute: Action[], entity?: Entity): void {
+    if (actionsToExecute.length > 0) {
       this.logger.log(
         LogMessageLevel.Trace,
         LogMessageContext.Orchestrator,
-        `[executeEntityActions] Executing entity action; Entity:${entity.id}, action:${action.name}`,
+        `[executeActions] Actions to execute:(${actionsToExecute
+          .map((a) => a.name)
+          .join(', ')})`,
       );
-      return this.entityActionExecutor.execute(entity, action);
+    }
+
+    actionsToExecute.forEach((action) => {
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Orchestrator,
+        `[executeActions] Executing action; Action:${action.name}`,
+      );
+
+      if (entity !== undefined) {
+        return this.entityActionExecutor.execute(entity, action);
+      }
+
+      return entity !== undefined
+        ? this.entityActionExecutor.execute(entity, action)
+        : this.orchestratorActionExecutor.execute(action);
     });
   }
 
-  public isValidCycle(cycleAmount: number) {
+  private filterActionsByPriorityAndCycle(actions: Action[], priority: number) {
+    return actions.filter(
+      (a) => a.priority === priority && this.isValidCycle(a.cicleAmount),
+    );
+  }
+
+  private isValidCycle(cycleAmount: number) {
     return this.context.currentCycle % cycleAmount === 0;
   }
 

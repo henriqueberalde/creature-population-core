@@ -14,14 +14,9 @@ beforeEach(() => {
 });
 
 describe('EntityCreatureActionExecutor', () => {
-  describe('calculateWills', () => {
-    it('When called then updates desireToKill', () => {
-      executor.execute(creature, new Action('calculateWills', 1, 1));
-
-      expect(creature.desireToKillOrHeal).not.toBe(0);
-    });
-    it('When called then updates desireToHeal', () => {
-      executor.execute(creature, new Action('calculateWills', 1, 1));
+  describe('updateDesireToKillOrHeall', () => {
+    it('When called then updates desireToKillOrHeal', () => {
+      executor.execute(creature, new Action('updateDesireToKillOrHeall', 1, 1));
 
       expect(creature.desireToKillOrHeal).not.toBe(0);
     });

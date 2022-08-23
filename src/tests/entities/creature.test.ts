@@ -34,10 +34,11 @@ describe('Creature', () => {
       });
       it('fixed actions are set', () => {
         expect(creature.actions[0].name).toBe('getOld');
-        expect(creature.actions[1].name).toBe('calculateWills');
-        expect(creature.actions[2].name).toBe('move');
-        expect(creature.actions[3].name).toBe('hurt');
-        expect(creature.actions[4].name).toBe('heal');
+        expect(creature.actions[1].name).toBe('updateDesireToKillOrHeal');
+        expect(creature.actions[2].name).toBe('defineTarget');
+        expect(creature.actions[3].name).toBe('move');
+        expect(creature.actions[4].name).toBe('hurt');
+        expect(creature.actions[5].name).toBe('heal');
       });
     });
     describe('When called passing id, x, y then', () => {

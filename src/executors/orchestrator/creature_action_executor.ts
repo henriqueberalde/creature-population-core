@@ -27,7 +27,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
 
   private removeDeadCreatures(): void {
     const idsToRemove: string[] = this.context.entities
-      .filter((e) => (e as Creature).life <= 0)
+      .filter((e) => (e as Creature).isDead)
       .map((e) => e.id);
 
     const idsToRemoveMessage = idsToRemove.join(', ');

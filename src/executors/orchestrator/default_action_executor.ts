@@ -25,7 +25,7 @@ export default class DefaultActionExecutor extends ActionExecutor {
     this.logger.log(
       LogMessageLevel.Warn,
       LogMessageContext.OrchestratorExecutor,
-      `[DefaultActionExecutor] If you are trying to use orchestrator actions implements OrchestratorAction interface and set orchestratorActionExecutor property of orchestrator object. The action ${action.name} was not handle at this instance`,
+      `[DefaultActionExecutor] If you are trying to use orchestrator actions you should implement OrchestratorAction interface and set orchestratorActionExecutor property of orchestrator object. The action ${action.name} was not handle at this instance`,
     );
   }
 }

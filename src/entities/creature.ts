@@ -21,8 +21,8 @@ export default class Creature extends Entity {
 
   public isDead: boolean;
 
-  constructor(id: string, x: number, y: number) {
-    super(id);
+  constructor(id: string, x: number, y: number, actions?: Action[]) {
+    super(id, actions);
 
     this.position = new Vector([x, y]);
     this.velocity = new Vector([0, 0]);

@@ -99,6 +99,27 @@ describe('Orchestrator', () => {
         expect(entities[2].age).toBe(1);
       });
     });
+    describe('endOfTurnCallBack', () => {
+      it('When set then function is called', () => {
+        let callBackWasCalled = false;
+        orchestrator = new Orchestrator(
+          [],
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          () => {
+            callBackWasCalled = true;
+          },
+        );
+
+        orchestrator.executeTurn();
+
+        expect(callBackWasCalled).toBe(true);
+      });
+    });
     it('When isEndOfGame returns true then stop executing turns', () => {
       entities.push(new Entity('E1', [oneCycleAgeAction]));
       orchestrator = new Orchestrator(

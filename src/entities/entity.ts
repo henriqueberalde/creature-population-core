@@ -1,16 +1,20 @@
 import Action from './action';
+import Will from './will';
 
 export default class Entity {
   public id: string;
 
   public age: number;
 
+  public wills: Will[];
+
   public actions: Action[];
 
-  constructor(id: string, actions?: Action[]) {
+  constructor(id: string, actions?: Action[], wills?: Will[]) {
     this.id = id;
     this.age = 0;
     this.actions = actions !== undefined ? actions : [new Action('getOld')];
+    this.wills = wills !== undefined ? wills : [];
   }
 
   public removeAction(name: string) {

@@ -21,6 +21,11 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
         this.removeDeadCreatures();
         break;
       default:
+        this.logger.log(
+          LogMessageLevel.Trace,
+          LogMessageContext.Action,
+          `[Orchestrator:CreatureActionExecutor:execute] Action not executed (${action.name}) on CreatureActionExecutor level`,
+        );
         break;
     }
   }

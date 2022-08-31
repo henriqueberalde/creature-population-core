@@ -31,6 +31,11 @@ export default class DefaultActionExecutor extends ActionExecutor {
         );
         break;
       default:
+        this.logger.log(
+          LogMessageLevel.Trace,
+          LogMessageContext.Action,
+          `[Entity:DefaultActionExecutor:execute] ${entity.id} Action not executed (${action.name}) on DefaultActionExecutor level`,
+        );
         break;
     }
   }

@@ -17,6 +17,8 @@ export default class Orchestrator {
 
   private isEndOfGame: { (context: Context): boolean };
 
+  private endOfTurnCallBack: Function;
+
   private actions: Action[] = [];
 
   private entityActionExecutor: EntityActionExecutor;
@@ -35,8 +37,8 @@ export default class Orchestrator {
     orchestratorActionExecutor?: OrchestratorActionExecutor,
     logger?: Logger,
     isEndOfGame?: { (context: Context): boolean },
+    endOfTurnCallBack?: Function,
   );
-
   constructor(
     entities: Entity[],
     actions?: Action[],
@@ -45,10 +47,13 @@ export default class Orchestrator {
     orchestratorActionExecutor?: OrchestratorActionExecutor,
     logger?: Logger,
     isEndOfGame?: { (context: Context): boolean },
+    endOfTurnCallBack?: Function,
   ) {
     this.context = context !== undefined ? context : new Context(entities);
     this.isEndOfGame =
       isEndOfGame !== undefined ? isEndOfGame : isContextEntitiesEmpty;
+    this.endOfTurnCallBack =
+      endOfTurnCallBack !== undefined ? endOfTurnCallBack : () => {};
     this.entityActionExecutor =
       entityActionExecutor !== undefined
         ? entityActionExecutor
@@ -111,6 +116,8 @@ export default class Orchestrator {
     if (this.isEndOfGame(this.context)) this.stop = true;
 
     this.context.currentCycle += 1;
+
+    this.endOfTurnCallBack();
   }
 
   private executeOrchestratorActionsByPriorityAndCycle(priority: number) {

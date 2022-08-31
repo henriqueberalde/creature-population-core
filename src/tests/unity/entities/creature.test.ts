@@ -1,4 +1,4 @@
-import { Action, Creature } from '../../entities';
+import { Action, Creature } from '../../../entities';
 
 let creature: Creature;
 
@@ -30,7 +30,7 @@ describe('Creature', () => {
         expect(creature.breakingRadius).toBe(400);
       });
       it('fixed will props are set', () => {
-        expect(creature.desireToKillOrHeal).toBe(0);
+        expect(creature.getWill('kill_heal').value).toBe(0);
       });
       it('fixed actions are set', () => {
         expect(creature.actions[0].name).toBe('getOld');

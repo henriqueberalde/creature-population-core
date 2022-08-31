@@ -1,5 +1,5 @@
-import { Action, Entity } from '../../../entities';
-import DefaultActionExecutor from '../../../executors/entity/default_action_executor';
+import { Action, Entity } from '../../../../entities';
+import DefaultActionExecutor from '../../../../executors/entity/default_action_executor';
 
 const oneCycleAgeAction = new Action('getOld', 1, 1);
 

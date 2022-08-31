@@ -1,4 +1,4 @@
-import { Action, Entity } from '../../entities';
+import { Action, Entity } from '../../../entities';
 
 let entity: Entity;
 

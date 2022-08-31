@@ -34,7 +34,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     const creature = entity as Creature;
 
     switch (action.name) {
-      case 'updateDesireToKillOrHeall':
+      case 'updateDesireToKillOrHeal':
         this.updateDesireToKillOrHeal(creature);
         break;
       case 'defineTarget':
@@ -50,47 +50,155 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
         this.healRandomHurtCreatureBasedOnCreatureWill(creature);
         break;
       default:
+        this.logger.log(
+          LogMessageLevel.Trace,
+          LogMessageContext.Action,
+          `[Entity:CreatureActionExecutor:execute] ${creature.id} Action not executed (${action.name}) on CreatureActionExecutor level`,
+        );
         break;
     }
   }
 
   protected updateDesireToKillOrHeal(creature: Creature) {
-    const desireToKillOrHealOld = creature.desireToKillOrHeal;
+    const desireToKillOrHeal = creature.getWill('kill_heal');
+    const desireToKillOrHealValueOld = desireToKillOrHeal.getValue();
 
-    creature.desireToKillOrHeal += getRandomIntegerOnRange(-10, 10);
-
-    this.defineTarget(creature);
+    desireToKillOrHeal.value += getRandomIntegerOnRange(-10, 10);
 
     this.logger.log(
       LogMessageLevel.Info,
       LogMessageContext.Action,
-      `[updatreDesireToKillOrHeal] ${creature.id} desireToKillOrHeal ${desireToKillOrHealOld} => ${creature.desireToKillOrHeal}`,
+      `[updatreDesireToKillOrHeal] ${creature.id} desireToKillOrHeal ${desireToKillOrHealValueOld} => ${desireToKillOrHeal.value}`,
     );
   }
 
   protected defineTarget(creature: Creature) {
-    if (getRandomIntegerOnRange(0, 14) === 2) {
-      const x = getRandomIntegerOnRange(100, 900);
-      const y = getRandomIntegerOnRange(100, 900);
-      creature.target = new Vector([x, y]);
+    switch (creature.getKillHealValue()) {
+      case 'kill':
+        this.setTargetToKill(creature);
+        break;
+      case 'heal':
+        this.setTargetToHeal(creature);
+        break;
+      default:
+        this.setRandomTarget(creature);
+        break;
+    }
+  }
 
+  protected setTargetToKill(creature: Creature) {
+    const closerCreature = this.getCloserCreature(
+      creature,
+      this.context.entities as Creature[],
+    );
+
+    if (closerCreature === undefined) {
       this.logger.log(
         LogMessageLevel.Trace,
         LogMessageContext.Action,
-        `[defineTarget] ${creature.id} has taken a new target location: (${creature.target.values[0]}, ${creature.target.values[1]})`,
+        `[setTargetToKill] ${creature.id} no target was found`,
       );
+
+      this.setRandomTarget(creature);
+      return;
     }
+
+    this.setTarget(creature, closerCreature);
+  }
+
+  protected setTargetToHeal(creature: Creature) {
+    const allHurtCreatures = this.getAllHurtCreatures();
+    const closerHurtCreature = this.getCloserCreature(
+      creature,
+      allHurtCreatures,
+    );
+
+    if (closerHurtCreature === undefined) {
+      this.logger.log(
+        LogMessageLevel.Trace,
+        LogMessageContext.Action,
+        `[setTargetToHeal] ${creature.id} no hurt target was found`,
+      );
+
+      this.setRandomTarget(creature);
+      return;
+    }
+
+    this.setTarget(creature, closerHurtCreature);
+  }
+
+  protected setTarget(creature: Creature, targetCreature: Creature) {
+    creature.target = new Vector([
+      targetCreature.position.values[0],
+      targetCreature.position.values[1],
+    ]);
+
+    if (creature.isDiferentTargetToSeek(targetCreature.id)) {
+      creature.seekingCreatureId = targetCreature.id;
+
+      this.logNewTarget(creature);
+    }
+  }
+
+  protected setRandomTarget(creature: Creature) {
+    creature.seekingCreatureId = undefined;
+    if (getRandomIntegerOnRange(0, 14) === 2) {
+      creature.target = new Vector([
+        getRandomIntegerOnRange(100, 900),
+        getRandomIntegerOnRange(100, 900),
+      ]);
+
+      this.logNewTarget(creature);
+    }
+  }
+
+  protected logNewTarget(creature: Creature) {
+    this.logger.log(
+      LogMessageLevel.Trace,
+      LogMessageContext.Action,
+      `[defineTarget] ${creature.id} has taken a new target (${creature.target.values[0]}, ${creature.target.values[1]}); SeekingCreature: ${creature.seekingCreatureId}`,
+    );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  protected getCloserCreature(
+    creature: Creature,
+    options: Creature[],
+  ): Creature | undefined {
+    let closerCreature: Creature | undefined;
+    let closerCreatureDist: number;
+
+    options.forEach((e) => {
+      const c = e as Creature;
+      const dist = VectorHelper.dist(c.position, creature.position);
+
+      if (
+        c.id !== creature.id &&
+        (closerCreature === undefined || dist < closerCreatureDist)
+      ) {
+        closerCreature = c;
+        closerCreatureDist = dist;
+      }
+    });
+
+    return closerCreature;
   }
 
   protected move(creature: Creature) {
     const distToTarget = creature.position.substract(creature.target).length();
 
-    let speed = creature.maxSpeed;
+    creature.speed = creature.maxSpeed;
     const steringForce = creature.maxSteringForce;
     const acceleration = creature.maxAcceleration;
 
     if (distToTarget < creature.breakingRadius * creature.velocity.length()) {
-      speed = MathHelper.proportion(distToTarget, 0, 100, 0, creature.maxSpeed);
+      creature.speed = MathHelper.proportion(
+        distToTarget,
+        0,
+        100,
+        0,
+        creature.maxSpeed,
+      );
       this.logger.log(
         LogMessageLevel.Trace,
         LogMessageContext.Action,
@@ -98,15 +206,15 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
           creature.id
         } started to break because of distToTarget < breakingRadius * creature.velocity.length(); distToTarget:${distToTarget}, breakingRadius:${
           creature.breakingRadius
-        }, creature.velocity.length():${creature.velocity.length()}; Calculated speed: ${speed}, maxSpeed: ${
-          creature.maxSpeed
-        }`,
+        }, creature.velocity.length():${creature.velocity.length()}; Calculated speed: ${
+          creature.speed
+        }, maxSpeed: ${creature.maxSpeed}`,
       );
     }
 
     // Seek
     let desired = creature.target.substract(creature.position);
-    desired = VectorHelper.setMag(desired, speed);
+    desired = VectorHelper.setMag(desired, creature.speed);
 
     let stering = desired.substract(creature.velocity);
     stering = VectorHelper.limit(stering, steringForce);
@@ -130,7 +238,7 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
   }
 
   protected hurtRandomCreatureBasedOnCreatureWill(creature: Creature) {
-    if (creature.desireToKillOrHeal <= 20) return;
+    if (creature.getKillHealValue() !== 'kill') return;
 
     this.hurt(creature, this.getRandomCreature());
   }
@@ -152,14 +260,18 @@ export default class CreatureActionExecutor extends DefaultActionExecutor {
     const randomHurtCreature = this.getRandomHurtCreature();
 
     if (
-      creature.desireToKillOrHeal >= -20 ||
+      creature.getKillHealValue() !== 'heal' ||
       randomHurtCreature === undefined
     ) {
-      if (creature.desireToKillOrHeal < -20) {
+      if (creature.getKillHealValue() === 'heal') {
         this.logger.log(
           LogMessageLevel.Trace,
           LogMessageContext.Action,
-          `[heal] ${creature.id} wants to heal someone (desireToKillOrHeal: ${creature.desireToKillOrHeal}) but there was no creature hurted`,
+          `[heal] ${
+            creature.id
+          } wants to heal someone (desireToKillOrHeal: ${creature
+            .getWill('kill_heal')
+            .getValue()}) but there was no creature hurted`,
         );
       }
       return;

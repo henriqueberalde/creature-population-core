@@ -3,6 +3,7 @@ import Action from './action';
 import Entity from './entity';
 import getRandomIntegerOnRange from '../utils/random_integer_on_range';
 import { CycleAmount, Priority } from '../utils/enums';
+import Will from './will';
 
 export default class Creature extends Entity {
   public life: number;
@@ -13,7 +14,11 @@ export default class Creature extends Entity {
 
   public acceleration: Vector;
 
+  public seekingCreatureId?: string;
+
   public target: Vector;
+
+  public speed: number = 0;
 
   public maxSpeed: number = 15;
 
@@ -23,7 +28,7 @@ export default class Creature extends Entity {
 
   public breakingRadius: number = 400;
 
-  public desireToKillOrHeal: number;
+  public wills: Will[];
 
   public isDead: boolean;
 
@@ -49,8 +54,9 @@ export default class Creature extends Entity {
     }
 
     this.life = 100;
-    this.desireToKillOrHeal = 0;
     this.isDead = this.life <= 0;
+
+    this.wills = [new Will('kill', 20, 'heal', -20, 0)];
 
     this.actions.push(
       new Action(
@@ -79,5 +85,27 @@ export default class Creature extends Entity {
 
   public y() {
     return this.position.values[1];
+  }
+
+  public getWill(name: string): Will {
+    let willFound;
+
+    this.wills.forEach((will) => {
+      if (will.getName() === name) willFound = will;
+    });
+
+    if (willFound === undefined) {
+      throw new Error(`Will not found: ${name} on creature: ${this.id}`);
+    }
+
+    return willFound;
+  }
+
+  public getKillHealValue(): string | undefined {
+    return this.getWill('kill_heal').getValue();
+  }
+
+  public isDiferentTargetToSeek(newSeekingCreatureId: string) {
+    return this.seekingCreatureId !== newSeekingCreatureId;
   }
 }

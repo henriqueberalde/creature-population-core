@@ -1,5 +1,5 @@
-import { Action, Entity } from '../entities';
-import Orchestrator from '../orchestrator';
+import { Action, Entity } from '../../entities';
+import Orchestrator from '../../orchestrator';
 import MockOrchestratorActionExecutor from './mock_o_action_executor';
 
 let entities: Entity[];
@@ -8,13 +8,12 @@ let mockOActionExecutor: MockOrchestratorActionExecutor;
 let orchestrator: Orchestrator;
 const oneCycleAgeAction = new Action('getOld', 1, 1);
 
-beforeEach(() => {
-  entities = [];
-  actions = [];
-  mockOActionExecutor = new MockOrchestratorActionExecutor();
-});
-
 describe('Orchestrator', () => {
+  beforeEach(() => {
+    entities = [];
+    actions = [];
+    mockOActionExecutor = new MockOrchestratorActionExecutor();
+  });
   describe('executeTurn', () => {
     describe('Orchestrator Actions', () => {
       it('When many repeated priorities then execute only one of each', () => {
@@ -98,6 +97,27 @@ describe('Orchestrator', () => {
         expect(entities[0].age).toBe(1);
         expect(entities[1].age).toBe(1);
         expect(entities[2].age).toBe(1);
+      });
+    });
+    describe('endOfTurnCallBack', () => {
+      it('When set then function is called', () => {
+        let callBackWasCalled = false;
+        orchestrator = new Orchestrator(
+          [],
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          () => {
+            callBackWasCalled = true;
+          },
+        );
+
+        orchestrator.executeTurn();
+
+        expect(callBackWasCalled).toBe(true);
       });
     });
     it('When isEndOfGame returns true then stop executing turns', () => {

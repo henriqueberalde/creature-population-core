@@ -1,12 +1,14 @@
-import { Action, Creature } from '../../entities';
+import { Vector } from 'ts-matrix';
+import { Action, Creature } from '../../../entities';
+import Will from '../../../entities/will';
 
 let creature: Creature;
 
 describe('Creature', () => {
+  beforeEach(() => {
+    creature = new Creature('Creature1', 10, 10);
+  });
   describe('constructor', () => {
-    beforeEach(() => {
-      creature = new Creature('Creature1', 10, 10);
-    });
     describe('When called then', () => {
       it('fixed props are set', () => {
         expect(creature.life).toBe(100);
@@ -30,7 +32,7 @@ describe('Creature', () => {
         expect(creature.breakingRadius).toBe(400);
       });
       it('fixed will props are set', () => {
-        expect(creature.desireToKillOrHeal).toBe(0);
+        expect(creature.getWill('kill_heal').value).toBe(0);
       });
       it('fixed actions are set', () => {
         expect(creature.actions[0].name).toBe('getOld');
@@ -70,6 +72,67 @@ describe('Creature', () => {
 
         expect(creature.maxSpeed).toBe(500);
       });
+    });
+  });
+
+  describe('getWill', () => {
+    it('when called then returns selected will by name', () => {
+      const rightOne = new Will('right', 100, 'one', -100, 0);
+      const worngOne = new Will('wrong', 100, 'one', -100, 0);
+      creature.wills = [rightOne, worngOne];
+
+      expect(creature.getWill('right_one')).toMatchObject(rightOne);
+    });
+    it('when not found then throw Error', () => {
+      const rightOne = new Will('right', 100, 'one', -100, 0);
+      creature.wills = [rightOne];
+
+      expect(() => creature.getWill('wrong_one')).toThrow(
+        'Will not found: wrong_one on creature: Creature1',
+      );
+    });
+  });
+  describe('x', () => {
+    it('when called then returns position[0]', () => {
+      creature.position = new Vector([10, 40]);
+
+      expect(creature.x()).toBe(10);
+    });
+  });
+  describe('y', () => {
+    it('when called then returns position[1]', () => {
+      creature.position = new Vector([10, 40]);
+
+      expect(creature.y()).toBe(40);
+    });
+  });
+  describe('getKillHealValue', () => {
+    it('when > 20 then returns kill', () => {
+      creature.getWill('kill_heal').value = 21;
+
+      expect(creature.getKillHealValue()).toBe('kill');
+    });
+    it('when < -20 then returns heal', () => {
+      creature.getWill('kill_heal').value = -21;
+
+      expect(creature.getKillHealValue()).toBe('heal');
+    });
+    it('when >= -20 and <= 20 then returns undefined', () => {
+      creature.getWill('kill_heal').value = 0;
+
+      expect(creature.getKillHealValue()).toBe(undefined);
+    });
+  });
+  describe('isDiferentTargetToSeek', () => {
+    it('when diferent then returns true', () => {
+      creature.seekingCreatureId = 'ID1';
+
+      expect(creature.isDiferentTargetToSeek('ID2')).toBe(true);
+    });
+    it('when equal then returns false', () => {
+      creature.seekingCreatureId = 'ID1';
+
+      expect(creature.isDiferentTargetToSeek('ID1')).toBe(false);
     });
   });
 });

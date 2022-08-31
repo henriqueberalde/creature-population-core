@@ -1,5 +1,5 @@
-import { Action } from '../../entities';
-import { CycleAmount, Priority } from '../../utils/enums';
+import { Action } from '../../../entities';
+import { CycleAmount, Priority } from '../../../utils/enums';
 
 let action: Action;
 

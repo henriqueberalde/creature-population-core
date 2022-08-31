@@ -29,4 +29,8 @@ export default class VectorHelper {
     }
     return v;
   }
+
+  public static dist(v1: Vector, v2: Vector): number {
+    return v1.substract(v2).length();
+  }
 }

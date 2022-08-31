@@ -1,5 +1,5 @@
-import { Action, Context, Creature } from '../../../entities';
-import CreatureActionExecutor from '../../../executors/orchestrator/creature_action_executor';
+import { Action, Context, Creature } from '../../../../entities';
+import CreatureActionExecutor from '../../../../executors/orchestrator/creature_action_executor';
 
 let context: Context;
 

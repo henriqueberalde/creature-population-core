@@ -1,4 +1,4 @@
-import { Context, Entity } from '../../entities';
+import { Context, Entity } from '../../../entities';
 
 let context: Context;
 let entities: Entity[];

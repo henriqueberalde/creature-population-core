@@ -1,5 +1,5 @@
-import { Action, Entity } from '../entities';
-import ActionExecutor from '../executors/entity/action_executor';
+import { Action, Entity } from '../../entities';
+import ActionExecutor from '../../executors/entity/action_executor';
 
 export default class MockOrchestratorActionExecutor extends ActionExecutor {
   public orderCalled: string[] = [];
